@@ -7,7 +7,7 @@
 
 ## Overview
 
-Popular ticketing platforms like Ticketmaster face massive traffic spikes when high-demand events go on sale — thousands of users competing for limited tickets simultaneously. Poor request handling leads to long wait times, system crashes, and unfair servicing.
+Popular ticketing platforms like Ticketmaster face massive traffic spikes when high-demand events go on sale. Thousands of users are competing for limited tickets simultaneously. Poor request handling leads to long wait times, system crashes, and unfair servicing.
 
 This project simulates a **process scheduling system** that models how an operating system might manage large volumes of concurrent ticket purchase requests. Each user request is represented as a process, and four different scheduling algorithms are applied and benchmarked against one another.
 
