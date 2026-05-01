@@ -1,24 +1,23 @@
-def compute_metrics(completed_jobs, starvation_wait_threshold=200):
+def compute_metrics(completed_jobs):
     """
-    Compute scheduling performance metrics.
-
-    Returns a dict with:
-    - avg_waiting_time
-    - avg_turnaround_time
-    - throughput (jobs per time unit)
-    - starvation_rate (fraction of jobs that waited beyond threshold)
+    Compute scheduling performance metrics from a list of completed request dicts.
+    Starvation is defined as waiting more than 2x the average waiting time.
     """
     n = len(completed_jobs)
     if n == 0:
         return {}
 
-    total_wait = sum(j.waiting_time for j in completed_jobs)
-    total_turnaround = sum(j.turnaround_time() for j in completed_jobs)
-    makespan = max(j.finish_time for j in completed_jobs)
-    starved = sum(1 for j in completed_jobs if j.waiting_time > starvation_wait_threshold)
+    total_wait = sum(j["waiting_time"] for j in completed_jobs)
+    total_turnaround = sum(j["turnaround_time"] for j in completed_jobs)
+    makespan = max(j["completion_time"] for j in completed_jobs)
+    avg_wait = total_wait / n
+
+    # Starvation: waited more than 2x the average (relative threshold)
+    starvation_threshold = avg_wait * 2
+    starved = sum(1 for j in completed_jobs if j["waiting_time"] > starvation_threshold)
 
     return {
-        "avg_waiting_time": total_wait / n,
+        "avg_waiting_time": avg_wait,
         "avg_turnaround_time": total_turnaround / n,
         "throughput": n / makespan,
         "starvation_rate": starved / n,
@@ -34,4 +33,3 @@ def print_metrics(name, metrics):
     print(f"  Avg Turnaround Time: {metrics['avg_turnaround_time']:.2f}")
     print(f"  Throughput:          {metrics['throughput']:.4f} jobs/unit")
     print(f"  Starvation Rate:     {metrics['starvation_rate']*100:.2f}%")
-    print(f"  Total Jobs:          {metrics['total_jobs']}")
